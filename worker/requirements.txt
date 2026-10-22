@@ -1,0 +1,7 @@
+pika==1.3.2
+demucs==4.1.0
+# Demucs imports NumPy at runtime but does not declare it in its package metadata.
+numpy==2.4.6
+# Used directly by the processing adapter; pin the verified local CPU stack.
+sphn==0.2.1
+torch==2.14.0
