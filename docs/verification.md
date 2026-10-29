@@ -47,3 +47,15 @@ Commands and repeatable checks are in the root README. No unrelated containers w
 - The frontend, API, and worker are left running for interactive review; existing infrastructure containers were inspected and left unchanged.
 
 This milestone verifies the interface and end-to-end file flow. It does not establish transcription accuracy, broker outage recovery, or process crash durability. Those remain in the final recovery/quality milestone.
+
+## Submissions dashboard — 2026-10-29
+
+- Added paginated persisted history, original/numbered filename and job-ID search, status filters, global status counts, three-second refresh, result playback, individual downloads and terminal-job deletion. The UI can submit another upload while earlier jobs process.
+- Recent activity shows the latest 30 completed/failed submissions across all pages and filters. Notification read state persists in the browser, and notices open the corresponding result.
+- Bulk actions accept up to 20 jobs. MIDI-only, WAV-only and combined ZIP contents were verified. Deletion requires UI confirmation; missing or active jobs reject an entire selection. Only generated test records were deleted during verification.
+- PostgreSQL migrations use Flyway. Backed up the existing project database to ignored `.cache/pre-dashboard-backup.sql` before applying V1/V2. All 26 existing submissions were preserved. An opt-in migration test also passed against disposable fresh and legacy schemas, including duplicate names and a repeat migration; its test schemas were removed.
+- Java unit tests: 9 passed; the generated Spring context test and opt-in migration test skip by default. The migration test passed separately with `RUN_DASHBOARD_MIGRATION_TESTS=true`. Python: all 4 existing tests passed. Frontend: all 11 tests passed, and the production build succeeded.
+- `scripts/check_dashboard.py` passed through the real frontend proxy, API, PostgreSQL, RabbitMQ and worker. It verified concurrent repeated-name allocation, collision with a name already containing a suffix, suffix reservations after deletion, search, filters, pagination, recent activity, all ZIP formats/signatures, missing/active selection rejection and deletion cleanup. Fixtures use a fresh unique basename per run; no existing submissions are changed.
+- Live browser checks covered filename search, selection enabling bulk actions, a successful ZIP download, deletion confirmation/cancel, notification opening and opening a completed result from a notice. Desktop and mobile layouts were inspected; previews are kept in ignored `.cache/dashboard-desktop.png` and `.cache/dashboard-preview.png`.
+- Filename allocation is persistent and case-insensitive: repeated uploads get `Song`, `Song (2)`, `Song (3)`. The same submission keeps its assigned download name; browser collision handling applies when downloaded repeatedly. This milestone does not add content-hash deduplication or active-job cancellation.
+- API, frontend and worker remain running for review. Deliberate broker outages and crash-recovery checks remain pending.

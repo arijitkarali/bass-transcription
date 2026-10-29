@@ -125,10 +125,19 @@ class TranscriptionTests(unittest.TestCase):
             (root / "inputs" / "invalid.wav").write_bytes(b"not audio")
             with self.assertRaisesRegex(ValueError, "could not be decoded"):
                 processor.process("inputs/invalid.wav", uuid.uuid4())
+            with wave.open(str(root / "inputs" / "minute.wav"), "wb") as wav:
+                wav.setnchannels(1)
+                wav.setsampwidth(2)
+                wav.setframerate(8000)
+                wav.writeframes(b"\0\0" * (8000 * 60))
+            job_id = uuid.uuid4()
+            _, result = processor.process("inputs/minute.wav", job_id)
+            with wave.open(str((root / result).parent / "bass.wav"), "rb") as wav:
+                self.assertEqual(wav.getnframes() / wav.getframerate(), 60)
             with wave.open(str(root / "inputs" / "long.wav"), "wb") as wav:
                 wav.setnchannels(1)
                 wav.setsampwidth(2)
                 wav.setframerate(8000)
-                wav.writeframes(b"\0\0" * (8000 * 31))
-            with self.assertRaisesRegex(ValueError, "at most 30 seconds"):
+                wav.writeframes(b"\0\0" * (8000 * 60 + 1))
+            with self.assertRaisesRegex(ValueError, "at most 60 seconds"):
                 processor.process("inputs/long.wav", uuid.uuid4())

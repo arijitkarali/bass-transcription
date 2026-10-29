@@ -8,6 +8,7 @@ public class Job {
  @Enumerated(EnumType.STRING) @Column(nullable=false) public Status status;
  @Column(nullable=false) public String inputPath;
  @Column public String userFileName;
+ @Column(nullable=false,unique=true) public String downloadName;
  public String resultPath;
  @Column(length=2000) public String errorMessage;
  public Long sizeBytes;

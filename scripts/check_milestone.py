@@ -59,7 +59,7 @@ with wave.open(buffer, "wb") as clip:
     clip.writeframes(samples.tobytes())
 data = buffer.getvalue()
 rejected_upload(b"not audio", "sample.txt", 415)
-rejected_upload(b"\0" * 6_000_000, "too-large.wav", 413)
+rejected_upload(b"\0" * 20_000_000, "too-large.wav", 413)
 success, missing, invalid = upload(data), upload(data), upload(b"not audio")
 assert success["status"] == missing["status"] == invalid["status"] == "QUEUED"
 # Delete only the disposable fixture created by this test.

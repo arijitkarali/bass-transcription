@@ -8,7 +8,7 @@ import wave
 
 import numpy as np
 
-MAX_SECONDS = 30
+MAX_SECONDS = 60
 ANALYSIS_RATE = 11025
 FRAME = 4096
 HOP = 256
@@ -152,7 +152,7 @@ class TranscriptionProcessor:
         if audio.size == 0 or rate <= 0:
             raise ValueError("Audio is empty")
         if audio.shape[-1] / rate > MAX_SECONDS:
-            raise ValueError("Audio must be at most 30 seconds")
+            raise ValueError(f"Audio must be at most {MAX_SECONDS} seconds")
         separator = self._separator()
         from demucs.audio import convert_audio
         tensor = torch.from_numpy(np.ascontiguousarray(audio, dtype=np.float32))
